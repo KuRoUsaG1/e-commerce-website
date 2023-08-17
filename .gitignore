@@ -1,0 +1,6 @@
+/02-backend/spring-boot-ecommerce/target/
+/.idea/
+/02-backend/spring-boot-ecommerce/.idea/
+/03-frontend/angular-ecommerce/.angular/
+/03-frontend/angular-ecommerce/node_modules/
+/03-frontend/angular-ecommerce/.vscode/
