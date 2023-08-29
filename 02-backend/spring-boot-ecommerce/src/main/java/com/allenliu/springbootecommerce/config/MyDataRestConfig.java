@@ -7,6 +7,7 @@ import com.allenliu.springbootecommerce.entity.State;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.metamodel.EntityType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 import org.springframework.data.rest.core.mapping.ExposureConfigurer;
@@ -21,30 +22,31 @@ public class MyDataRestConfig implements RepositoryRestConfigurer {
 
     private EntityManager entityManager;
 
+    @Value("${allowed.origins}")
+    private String[] theAllowedOrigins;
+
     @Autowired
     public MyDataRestConfig(EntityManager entityManager){
         this.entityManager = entityManager;
     }
+
     @Override
     public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config, CorsRegistry cors) {
-        HttpMethod[] theUnsupportedActions = {HttpMethod.PUT, HttpMethod.POST, HttpMethod.DELETE};
+        HttpMethod[] theUnsupportedActions = {HttpMethod.PUT, HttpMethod.POST,
+                                              HttpMethod.DELETE, HttpMethod.PATCH};
 
-        // disable HTTP Methods for Product: Put, Post and Delete
+        // disable HTTP Methods for endpoints: Put, Post, Delete, Patch
         disableHttpMethods(config.getExposureConfiguration()
                 .forDomainType(Product.class), theUnsupportedActions);
-
-        // disable HTTP Methods for ProductCategory: Put, Post and Delete
         disableHttpMethods(config.getExposureConfiguration()
                 .forDomainType(ProductCategory.class), theUnsupportedActions);
-
-        // disable HTTP Methods for Country: Put, Post and Delete
         disableHttpMethods(config.getExposureConfiguration()
                 .forDomainType(Country.class), theUnsupportedActions);
-
-        // disable HTTP Methods for State: Put, Post and Delete
         disableHttpMethods(config.getExposureConfiguration()
                 .forDomainType(State.class), theUnsupportedActions);
 
+        // configure cors mapping
+        cors.addMapping(config.getBasePath() + "/**").allowedOrigins(theAllowedOrigins);
         exposeIds(config);
     }
 
